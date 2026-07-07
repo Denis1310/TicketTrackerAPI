@@ -1,15 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TicketTrackerAPI.Entities.enums;
 
-namespace TicketTrackerAPI.Entities;
+namespace TicketTrackerAPI.Models.DTOs;
 
-public class Ticket
+public class CreateTicketRequest
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
-
+    [Required]
     [MinLength(5, ErrorMessage = "Title must be at least 5 characters long.")]
     public string Title { get; set; }
     public string? Description { get; set; }
+
+    [Required]
+    [EnumDataType(typeof(Priority), ErrorMessage = "Invalid priority value.")]
     public Priority Priority { get; set; }
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
 }

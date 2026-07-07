@@ -3,9 +3,9 @@ using TicketTrackerAPI.Entities;
 
 namespace TicketTrackerAPI.Features.Commands;
 
-public class CreateTicket : IRequest
+public class CreateTicket : IRequest<Ticket>
 {
-    public Ticket Ticket { get; set; }
+    public Ticket Ticket { get; }
 
     public CreateTicket(Ticket ticket)
     {

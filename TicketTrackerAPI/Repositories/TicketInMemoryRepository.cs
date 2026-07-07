@@ -2,9 +2,10 @@
 
 namespace TicketTrackerAPI.Repositories;
 
-public class TicketRepository(
-    List<Ticket> _tickets)
+public class TicketInMemoryRepository
 {
+    List<Ticket> _tickets = new List<Ticket>();
+
     public List<Ticket> GetAllTickets()
     {
         return _tickets;

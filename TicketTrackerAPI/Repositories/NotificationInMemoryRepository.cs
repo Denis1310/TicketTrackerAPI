@@ -3,15 +3,16 @@ using TicketTrackerAPI.Entities.enums;
 
 namespace TicketTrackerAPI.Repositories;
 
-public class NotificationRepository(
-    List<Notification> _notifications)
+public class NotificationInMemoryRepository
 {
+    List<Notification> _notifications = new List<Notification>();
+
     public void AddNotification(Notification notification)
     {
         _notifications.Add(notification);
     }
 
-    public List<Notification> GetAllPendingOrFailedNotifications(Guid ticketId)
+    public List<Notification> GetAllPendingAndFailedNotifications(Guid ticketId)
     {
         return _notifications
             .Where(n =>

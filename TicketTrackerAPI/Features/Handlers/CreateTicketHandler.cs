@@ -1,15 +1,16 @@
 ﻿using MediatR;
+using TicketTrackerAPI.Entities;
 using TicketTrackerAPI.Features.Commands;
 using TicketTrackerAPI.Repositories;
 
 namespace TicketTrackerAPI.Features.Handlers;
 
 public class CreateTicketHandler(
-    TicketRepository _repo) : IRequestHandler<CreateTicket>
+    TicketInMemoryRepository _repo) : IRequestHandler<CreateTicket, Ticket>
 {
-    public Task Handle(CreateTicket request, CancellationToken cancellationToken)
+    public Task<Ticket> Handle(CreateTicket request, CancellationToken cancellationToken)
     {
         _repo.AddTicket(request.Ticket);
-        return Task.CompletedTask;
+        return Task.FromResult(request.Ticket);
     }
 }

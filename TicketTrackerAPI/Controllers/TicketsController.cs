@@ -4,6 +4,7 @@ using TicketTrackerAPI.Entities;
 using TicketTrackerAPI.Entities.enums;
 using TicketTrackerAPI.Features.Commands;
 using TicketTrackerAPI.Features.Notificators;
+using TicketTrackerAPI.Models.DTOs;
 
 namespace TicketTrackerAPI.Controllers;
 
@@ -12,39 +13,46 @@ namespace TicketTrackerAPI.Controllers;
 public class TicketsController(
     IMediator _mediator) : ControllerBase
 {
-    [HttpPost("tickets")]
-    public async Task<IActionResult> CreateTicket([FromBody] Ticket ticket)
+    [HttpPost]
+    public async Task<IActionResult> CreateTicket([FromBody] CreateTicketRequest request)
     {
         try
         {
-            await _mediator.Send(new CreateTicket(ticket));
+            var ticket = await _mediator.Send(new CreateTicket(
+                new Ticket
+                {
+                    Title = request.Title,
+                    Description = request.Description,
+                    Priority = request.Priority
+                }));
+
+            await _mediator.Publish(new TicketCreatedNotification(ticket.Id,
+                Status.Pending,
+                // TODO: Move to handler and implement retry logic.
+                attemps: 1));
+
+            return Created($"api/tickets/{ticket.Id}", ticket);
         }
         catch
         {
             return StatusCode(500, "An error occurred while creating the ticket.");
         }
-
-        var notification = new Notification()
-        {
-            TicketId = ticket.Id,
-            Status = Status.Pending,
-            Attemps = 1,
-        };
-
-        await _mediator.Publish(new TicketCreatedNotification(notification));
-
-        return Ok();
     }
 
-    [HttpPost("tickets/{id}/notify")]
-    public IActionResult NotifyTicket(Guid id)
+    [HttpPost("{id}/notify")]
+    public async Task<IActionResult> NotifyTicket(Guid id)
     {
-        throw new NotImplementedException();
+        var result = await _mediator.Send(new GetPendingAndFailedNotifications(id));
+        return Ok(result);
     }
 
-    [HttpGet("tickets/{id}")]
-    public IActionResult GetTicketWithNotificationsById(Guid id)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetTicketWithNotifications(Guid id)
     {
-        throw new NotImplementedException();
+        var result = await _mediator.Send(new GetTicketWithNotifications(id));
+
+        return result is null ?
+            NotFound() :
+            Ok(result);
     }
 }
