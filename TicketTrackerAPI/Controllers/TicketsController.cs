@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using TicketTrackerAPI.Entities;
-using TicketTrackerAPI.Entities.enums;
 using TicketTrackerAPI.Features.Commands;
 using TicketTrackerAPI.Features.Notificators;
 using TicketTrackerAPI.Models.DTOs;
@@ -26,10 +25,7 @@ public class TicketsController(
                     Priority = request.Priority
                 }));
 
-            await _mediator.Publish(new TicketCreatedNotification(ticket.Id,
-                Status.Pending,
-                // TODO: Move to handler and implement retry logic.
-                attemps: 1));
+            await _mediator.Publish(new TicketCreatedNotification(ticket));
 
             return Created($"api/tickets/{ticket.Id}", ticket);
         }
@@ -43,7 +39,10 @@ public class TicketsController(
     public async Task<IActionResult> NotifyTicket(Guid id)
     {
         var result = await _mediator.Send(new GetPendingAndFailedNotifications(id));
-        return Ok(result);
+
+        return result != null && result.Any() ?
+            Ok(result) :
+            NotFound();
     }
 
     [HttpGet("{id}")]
@@ -51,8 +50,8 @@ public class TicketsController(
     {
         var result = await _mediator.Send(new GetTicketWithNotifications(id));
 
-        return result is null ?
-            NotFound() :
-            Ok(result);
+        return result != null ?
+            Ok(result) :
+            NotFound();
     }
 }

@@ -16,7 +16,7 @@ public class NotificationInMemoryRepository
     {
         return _notifications
             .Where(n =>
-                n.TicketId == ticketId && 
+                n.TicketId == ticketId &&
                 (n.Status == Status.Pending ||
                 n.Status == Status.Failed)).ToList();
     }
@@ -26,5 +26,23 @@ public class NotificationInMemoryRepository
         return _notifications
             .Where(n => n.TicketId == ticketId)
             .ToList();
+    }
+
+    public void UpdateNotification(Notification notification)
+    {
+        var existingNotification = _notifications.FirstOrDefault(n => n.Id == notification.Id);
+
+        if (existingNotification != null)
+        {
+            existingNotification.Status = notification.Status;
+            existingNotification.Attemps = notification.Attemps;
+            existingNotification.LastError = notification.LastError;
+        }
+    }
+
+    public Notification? GetByTicketIdAndChannel(Guid ticketId, Channel channel)
+    {
+        return _notifications
+            .FirstOrDefault(n => n.TicketId == ticketId && n.Channel == channel);
     }
 }

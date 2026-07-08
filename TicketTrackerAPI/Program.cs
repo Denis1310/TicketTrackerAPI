@@ -1,5 +1,8 @@
 using TicketTrackerAPI.Entities;
+using TicketTrackerAPI.Features.Notificators;
+using TicketTrackerAPI.Models;
 using TicketTrackerAPI.Repositories;
+using TicketTrackerAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,12 @@ builder.Services.AddMediatR(cfg =>
 
 builder.Services.AddSingleton<NotificationInMemoryRepository>();
 builder.Services.AddSingleton<TicketInMemoryRepository>();
+
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<INotificationService<EmailContent>, EmailService>();
+builder.Services.AddTransient<INotificationService<SmsContent>, SmsService>();
+builder.Services.AddTransient<INotificationService<PushContent>, PushService>();
+builder.Services.AddTransient(typeof(NotificationProcessor<>));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

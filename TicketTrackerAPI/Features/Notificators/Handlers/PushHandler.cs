@@ -1,25 +1,28 @@
 ﻿using MediatR;
-using TicketTrackerAPI.Entities;
 using TicketTrackerAPI.Entities.enums;
-using TicketTrackerAPI.Repositories;
+using TicketTrackerAPI.Models;
+using TicketTrackerAPI.Services;
 
 namespace TicketTrackerAPI.Features.Notificators.Handlers;
 
 public class PushHandler(
-    NotificationInMemoryRepository _repo,
+    IUserService _userService,
+    NotificationProcessor<PushContent> _notificationProcessor,
     ILogger<PushHandler> _logger) : INotificationHandler<TicketCreatedNotification>
 {
-    public Task Handle(TicketCreatedNotification request, CancellationToken cancellationToken)
+    public async Task Handle(TicketCreatedNotification request, CancellationToken cancellationToken)
     {
-        _repo.AddNotification(new Notification
-        {
-            TicketId = request.TicketId,
-            Channel = Channel.Push,
-            Status = request.Status,
-            Attemps = request.Attemps
-        });
-
         _logger.LogInformation("Sending push notification for ticket creation.");
-        return Task.CompletedTask;
+
+        var deviceToken = _userService.GetUserDeviceToken();
+
+        var content = new PushContent
+        {
+            DeviceToken = deviceToken,
+            Title = $"A ticket has been created: {request.Ticket.Title}",
+            Body = request.Ticket.Description
+        };
+
+        await _notificationProcessor.ProcessNotification(content, request.Ticket, Channel.Push);
     }
 }

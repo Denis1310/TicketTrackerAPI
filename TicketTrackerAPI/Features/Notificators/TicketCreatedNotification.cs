@@ -1,18 +1,14 @@
 ﻿using MediatR;
-using TicketTrackerAPI.Entities.enums;
+using TicketTrackerAPI.Entities;
 
 namespace TicketTrackerAPI.Features.Notificators;
 
 public class TicketCreatedNotification : INotification
 {
-    public Guid TicketId { get; }
-    public Status Status { get; }
-    public int Attemps { get; }
+    public Ticket Ticket { get; }
 
-    public TicketCreatedNotification(Guid ticketId, Status status, int attemps)
+    public TicketCreatedNotification(Ticket ticket)
     {
-        TicketId = ticketId;
-        Status = status;
-        Attemps = attemps;
+        Ticket = ticket;
     }
 }

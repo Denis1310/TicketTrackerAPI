@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using TicketTrackerAPI.Entities.enums;
+﻿using TicketTrackerAPI.Entities.enums;
 
 namespace TicketTrackerAPI.Entities;
 
