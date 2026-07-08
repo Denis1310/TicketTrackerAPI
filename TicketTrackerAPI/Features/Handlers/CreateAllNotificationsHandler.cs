@@ -19,10 +19,7 @@ public class CreateAllNotificationsHandler(
             Status = Status.Pending
         });
 
-        foreach (var item in notifications)
-        {
-            _repo.AddNotification(item);
-        }
+        _repo.AddRange(notifications.ToList());
 
         _logger.LogInformation(
             "Created {Count} notifications for ticket {TicketId}",

@@ -26,8 +26,9 @@ public class TicketsController(
                     Priority = request.Priority
                 }));
 
-            await _mediator.Send(new CreateAllNotifications(ticket,
-                new List<Channel> { Channel.Email, Channel.Sms, Channel.Push }));
+            await _mediator.Send(new CreateAllNotifications(
+                ticket,
+                Enum.GetValues(typeof(Channel)).Cast<Channel>()));
 
             return Created($"api/tickets/{ticket.Id}", ticket);
         }

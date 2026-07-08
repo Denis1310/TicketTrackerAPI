@@ -7,18 +7,9 @@ public class NotificationInMemoryRepository
 {
     List<Notification> _notifications = new List<Notification>();
 
-    public void AddNotification(Notification notification)
+    public void AddRange(List<Notification> notifications)
     {
-        _notifications.Add(notification);
-    }
-
-    public List<Notification> GetAllPendingAndFailedNotifications(Guid ticketId)
-    {
-        return _notifications
-            .Where(n =>
-                n.TicketId == ticketId &&
-                (n.Status == Status.Pending ||
-                n.Status == Status.Failed)).ToList();
+        _notifications.AddRange(notifications);
     }
 
     public List<Notification> GetAllNotifications(Guid ticketId)
