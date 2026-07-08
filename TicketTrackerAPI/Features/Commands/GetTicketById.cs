@@ -3,11 +3,11 @@ using TicketTrackerAPI.Entities;
 
 namespace TicketTrackerAPI.Features.Commands;
 
-public class GetPendingAndFailedNotifications : IRequest<List<Notification>>
+public class GetTicketById : IRequest<Ticket>
 {
     public Guid TicketId { get; }
 
-    public GetPendingAndFailedNotifications(Guid ticketId)
+    public GetTicketById(Guid ticketId)
     {
         TicketId = ticketId;
     }

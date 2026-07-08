@@ -16,30 +16,17 @@ public class NotificationProcessor<TNotification>(
         Ticket ticket,
         Channel channel)
     {
-        var notification = new Notification();
-        var existingNotification = _repo.GetByTicketIdAndChannel(ticket.Id, channel);
+        var notification = _repo.GetByTicketIdAndChannel(ticket.Id, channel);
 
-        if (existingNotification != null)
+        if (notification is null ||
+            notification.Status == Status.Sent ||
+            notification.Attemps >= 3)
         {
-            if (existingNotification.Status == Status.Sent ||
-                existingNotification.Attemps >= 3)
-            {
-                _logger.LogInformation($"The notification for ticket {ticket.Id} has already been sent or reached maximum attempts");
-                return;
-            }
+            _logger.LogInformation(
+                "Notification for ticket {TicketId} is missing, already sent, or reached maximum attempts.",
+                ticket.Id);
 
-            notification = existingNotification;
-        }
-        else
-        {
-            notification = new Notification
-            {
-                TicketId = ticket.Id,
-                Channel = channel,
-                Status = Status.Pending
-            };
-
-            _repo.AddNotification(notification);
+            return;
         }
 
         try

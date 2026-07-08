@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="TicketTrackerAPI.Tests/TicketTrackerAPI.Tests.csproj" Id="15022bcb-c78a-433e-be53-343dc675bba3" />
   <Project Path="TicketTrackerAPI/TicketTrackerAPI.csproj" />
 </Solution>

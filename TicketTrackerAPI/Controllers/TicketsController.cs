@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using TicketTrackerAPI.Entities;
+using TicketTrackerAPI.Entities.enums;
 using TicketTrackerAPI.Features.Commands;
 using TicketTrackerAPI.Features.Notificators;
 using TicketTrackerAPI.Models.DTOs;
@@ -25,7 +26,8 @@ public class TicketsController(
                     Priority = request.Priority
                 }));
 
-            await _mediator.Publish(new TicketCreatedNotification(ticket));
+            await _mediator.Send(new CreateAllNotifications(ticket,
+                new List<Channel> { Channel.Email, Channel.Sms, Channel.Push }));
 
             return Created($"api/tickets/{ticket.Id}", ticket);
         }
@@ -38,11 +40,16 @@ public class TicketsController(
     [HttpPost("{id}/notify")]
     public async Task<IActionResult> NotifyTicket(Guid id)
     {
-        var result = await _mediator.Send(new GetPendingAndFailedNotifications(id));
+        var ticket = await _mediator.Send(new GetTicketById(id));
 
-        return result != null && result.Any() ?
-            Ok(result) :
-            NotFound();
+        if (ticket is null)
+        {
+            return NotFound();
+        }
+
+        await _mediator.Publish(new TicketCreatedNotification(ticket));
+
+        return Ok();
     }
 
     [HttpGet("{id}")]
