@@ -8,7 +8,7 @@ namespace TicketTrackerAPI.Features.Notificators;
 
 public class NotificationProcessor<TNotification>(
     INotificationService<TNotification> _notificationService,
-    NotificationInMemoryRepository _repo,
+    INotificationInMemoryRepository _repo,
     ILogger<NotificationProcessor<TNotification>> _logger)
     where TNotification : INotificationContent, new()
 {
@@ -34,17 +34,19 @@ public class NotificationProcessor<TNotification>(
             await _notificationService.Send(notificationContent);
 
             notification.Status = Status.Sent;
-            _repo.UpdateNotification(notification);
 
             _logger.LogInformation("The notification sent successfully.");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"An error occurred while sending the notification: {ex.Message}.");
+            _logger.LogError(ex, $"Failed to send notification {notification.Id}: {ex.Message}.");
 
             notification.Status = Status.Failed;
             notification.LastError = ex.Message;
             notification.Attemps++;
+        }
+        finally
+        {
             _repo.UpdateNotification(notification);
         }
     }

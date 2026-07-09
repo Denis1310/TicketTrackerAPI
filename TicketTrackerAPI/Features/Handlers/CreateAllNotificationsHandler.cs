@@ -7,7 +7,7 @@ using TicketTrackerAPI.Repositories;
 namespace TicketTrackerAPI.Features.Handlers;
 
 public class CreateAllNotificationsHandler(
-    NotificationInMemoryRepository _repo,
+    INotificationInMemoryRepository _repo,
     ILogger<CreateAllNotificationsHandler> _logger) : IRequestHandler<CreateAllNotifications>
 {
     public Task Handle(CreateAllNotifications request, CancellationToken cancellationToken)

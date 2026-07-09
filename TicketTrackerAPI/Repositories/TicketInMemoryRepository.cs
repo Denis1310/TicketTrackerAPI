@@ -2,7 +2,7 @@
 
 namespace TicketTrackerAPI.Repositories;
 
-public class TicketInMemoryRepository
+public class TicketInMemoryRepository : ITicketInMemoryRepository
 {
     List<Ticket> _tickets = new List<Ticket>();
 

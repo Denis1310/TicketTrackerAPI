@@ -3,7 +3,7 @@ using TicketTrackerAPI.Entities.enums;
 
 namespace TicketTrackerAPI.Repositories;
 
-public class NotificationInMemoryRepository
+public class NotificationInMemoryRepository : INotificationInMemoryRepository
 {
     List<Notification> _notifications = new List<Notification>();
 

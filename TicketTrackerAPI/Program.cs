@@ -10,8 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(Ticket).Assembly));
 
-builder.Services.AddSingleton<NotificationInMemoryRepository>();
-builder.Services.AddSingleton<TicketInMemoryRepository>();
+builder.Services.AddSingleton<INotificationInMemoryRepository, NotificationInMemoryRepository>();
+builder.Services.AddSingleton<ITicketInMemoryRepository, TicketInMemoryRepository>();
 
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<INotificationService<EmailContent>, EmailService>();

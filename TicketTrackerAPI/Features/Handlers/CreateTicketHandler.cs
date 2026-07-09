@@ -6,7 +6,7 @@ using TicketTrackerAPI.Repositories;
 namespace TicketTrackerAPI.Features.Handlers;
 
 public class CreateTicketHandler(
-    TicketInMemoryRepository _repo) : IRequestHandler<CreateTicket, Ticket>
+    ITicketInMemoryRepository _repo) : IRequestHandler<CreateTicket, Ticket>
 {
     public Task<Ticket> Handle(CreateTicket request, CancellationToken cancellationToken)
     {

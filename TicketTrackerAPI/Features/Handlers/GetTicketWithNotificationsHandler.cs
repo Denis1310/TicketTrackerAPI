@@ -7,7 +7,7 @@ namespace TicketTrackerAPI.Features.Handlers;
 
 public class GetTicketWithNotificationsHandler(
     TicketInMemoryRepository _ticketRepo,
-    NotificationInMemoryRepository _notificationRepo) : IRequestHandler<GetTicketWithNotifications, Ticket?>
+    INotificationInMemoryRepository _notificationRepo) : IRequestHandler<GetTicketWithNotifications, Ticket?>
 {
     public Task<Ticket?> Handle(GetTicketWithNotifications request, CancellationToken cancellationToken)
     {
